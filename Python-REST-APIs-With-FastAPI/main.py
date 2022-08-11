@@ -1,12 +1,18 @@
 from fastapi import FastAPI, HTTPException
+from mongita import MongitaClientDisk
+from pydantic import BaseModel
 
-shapes = [
-    {"item_name": "Circle", "no_of_sides": 1, "id": 1},
-    {"item_name": "Triangle", "no_of_sides": 3, "id": 2},
-    {"item_name": "Octagon", "no_of_sides": 8, "id": 3},
-]
+class Shape(BaseModel):
+    name: str
+    no_of_sides: int
+    id: int
+
 
 app = FastAPI()
+
+client = MongitaClientDisk()
+db = client.db
+shapes = db.shapes
 
 @app.get("/")
 async def root():
@@ -14,11 +20,20 @@ async def root():
 
 @app.get("/shapes")
 async def get_shapes():
-    return shapes
+    existing_shapes = shapes.find({})
+    return[
+        {key:shape[key] for key in shape if key != "_id"}
+        for shape in existing_shapes
+    ]
 
 @app.get("/shapes/{shape_id}")
 async def get_shapes_by_id(shape_id: int):
-    for shape in shapes:
-        if shape["id"] == shape_id:
-            return shape
-        raise HTTPException(status_code=404, detail=f"No shape with id {shape_id} found")
+    if shapes.count_documents({"id": shape_id}) > 0:
+        shape = shapes.find_one({"id": shape_id})
+        return  {key:shape[key] for key in shape if key != "_id"}
+    raise HTTPException(status_code=404, detail=f"No shape with id {shape_id} found")
+
+@app.post("/shapes")
+async def post_shape(shape: Shape):
+    shapes.insert_one(shape.dict())
+    return shape
