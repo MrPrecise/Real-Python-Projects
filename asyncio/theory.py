@@ -15,8 +15,17 @@ async def main():
     odds2 = tuple(odds(21, 29))
     print(odd_values)
     print(odds2)
-    print('Randn(): ', await randn())
+    
+    start = time.perf_counter()
+    randomNum = await randn()
+    elapsed = time .perf_counter() - start
+    print(f'{randomNum} took {elapsed:0.3f} seconds.')
+
+    start = time.perf_counter()
+    randomNum = await asyncio.gather(*(randn() for _ in range(10)))
+    elapsed = time .perf_counter() - start
+    print(f'{randomNum} took {elapsed:0.3f} seconds.')
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
