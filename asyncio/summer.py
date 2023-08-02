@@ -15,8 +15,8 @@ async def worker(name, n, session):
 
 async def main():
     async with aiohttp.ClientSession() as session:
-        response = await worker('bob', 3, session)
-        print('response', response)
+        sums = await asyncio.gather(*(worker(f'w{i}', n, session) for i, n in enumerate(range(2, 30))))
+        print('sums', sums)
 
 if __name__ == '__main__':
     start = time.perf_counter()
