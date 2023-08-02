@@ -10,6 +10,11 @@ async def randn():
     await asyncio.sleep(3)
     return randint(1, 10)
 
+async def square_odds(start, stop):
+    for odd in odds(start, stop):
+        await asyncio.sleep(2)
+        yield odd ** 2
+
 async def main():
     odd_values = [odd for odd in odds(3, 15)]
     odds2 = tuple(odds(21, 29))
@@ -25,6 +30,9 @@ async def main():
     randomNum = await asyncio.gather(*(randn() for _ in range(10)))
     elapsed = time .perf_counter() - start
     print(f'{randomNum} took {elapsed:0.3f} seconds.')
+
+    async for so in square_odds(11, 17):
+        print('so ', so)
 
 
 if __name__ == "__main__":
