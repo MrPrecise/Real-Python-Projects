@@ -59,3 +59,29 @@ for _, row in phi_gm_stats.iterrows():
 
 # Add the win_loss data to the DataFrame
 phi_gm_stats['winLoss'] = win_loss
+
+# Isolate relevant data for 76er Scatter Plots
+phi_gm_stats_2 = (team_stats[(team_stats['teamAbbr'] == 'PHI') &
+                             (team_stats['seasTyp'] == 'Regular')]
+                  .loc[:, ['gmDate',
+                           'team2P%',
+                           'team3P%',
+                           'teamPTS',
+                           'opptPTS']]
+                  .sort_values('gmDate'))
+
+# Add game number
+phi_gm_stats_2['game_num'] = range(1, len(phi_gm_stats_2) + 1)
+
+# Derive a win_loss column
+win_loss = []
+for _, row in phi_gm_stats_2.iterrows():
+
+    # If the 76ers score more points, it's a win
+    if row['teamPTS'] > row['opptPTS']:
+        win_loss.append('W')
+    else:
+        win_loss.append('L')
+
+# Add the win_loss data to the DataFrame
+phi_gm_stats_2['winLoss'] = win_loss
