@@ -32,3 +32,30 @@ three_takers = three_takers[three_takers['play3PA'] >= 100].reset_index()
 
 # Add a column with a calculated three-point percentage (made/attempted)
 three_takers['pct3PM'] = three_takers['play3PM'] / three_takers['play3PA']
+
+# Philadelphia 76ers data isolated
+phi_gm_stats = (team_stats[(team_stats['teamAbbr'] == 'PHI') &
+                           (team_stats['seasTyp'] == 'Regular')]
+                .loc[:, ['gmDate',
+                         'teamPTS',
+                         'teamTRB',
+                         'teamAST',
+                         'teamTO',
+                         'opptPTS',]]
+                .sort_values('gmDate'))
+
+# Add game number
+phi_gm_stats['game_num'] = range(1, len(phi_gm_stats)+1)
+
+# Derive a win_loss column
+win_loss = []
+for _, row in phi_gm_stats.iterrows():
+
+    # If the 76ers score more poins, its a win
+    if row['teamPTS'] > row['opptPTS']:
+        win_loss.append('W')
+    else:
+        win_loss.append('L')
+
+# Add the win_loss data to the DataFrame
+phi_gm_stats['winLoss'] = win_loss
