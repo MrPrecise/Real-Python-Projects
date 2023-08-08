@@ -4,7 +4,7 @@ from bokeh.plotting import figure, show
 from bokeh.models import ColumnDataSource, CDSView, GroupFilter
 
 # Import the data
-from read_nba_data import standings
+from readNbaData import standings
 
 # Output to static HTML file
 output_file('east_top_2_standings_race.html',
@@ -21,7 +21,7 @@ raptors_view = CDSView(source=standings_cds,
 
 # Create and configure the figure
 east_fig = figure(x_axis_type='datetime',
-                  plot_height=300, plot_width=600,
+                  height=300, width=600,
                   title='Eastern Conference Top 2 Teams Wins Race, 2017-18',
                   x_axis_label='Date', y_axis_label='Wins',
                   toolbar_location=None)
